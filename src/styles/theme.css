@@ -1,0 +1,24 @@
+:root {
+    --primary: gold;
+    --primaryFontColor: #444;
+    --background: #444;
+    --fontColor: #eee;
+    --radius: 0.5rem;
+}
+
+body {
+    background: var(--background);
+    color: var(--fontColor);
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary);
+    transition: all 300;
+}
+a:hover,
+a:active,
+a:visited {
+    opacity: 0.8;
+    color: var(--primary);
+}

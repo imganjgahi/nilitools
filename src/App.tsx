@@ -1,10 +1,11 @@
-import './App.css';
-import HandDraw from './pages/HandDraw';
-
+import { BrowserRouter } from "react-router-dom";
+import { AppRoutes } from "./pages";
 function App() {
   return (
     <div className="App">
-      <HandDraw />
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
     </div>
   );
 }
