@@ -13,9 +13,6 @@ function Card({
 }: IProps) {
 
     const store = BoardStore()
-    const [diff, setDiff] = useState(null)
-    const [pos, setPos] = useState(null)
-
     function dragStartHandler(e: any) {
         const target = e.target
         e.dataTransfer.setData('card_id', target.id)
