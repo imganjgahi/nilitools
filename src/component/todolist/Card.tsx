@@ -29,6 +29,7 @@ function Card({
     id={id}
     onDragStart={dragStartHandler}
     onDragOver={dragOverHandler}
+    onDragEnd={e => e.currentTarget.style.display = 'block'}
     >
         {title}
     </div>
