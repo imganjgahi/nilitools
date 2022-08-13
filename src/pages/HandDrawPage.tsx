@@ -217,6 +217,10 @@ function HandDrawPage() {
                     setAction('ready')
                     setShapeType('triangle')
                 }}>Triangle</div>
+                <div className={shapeType === "clear" ? "shape active" : "shape"} onClick={() => {
+                    const newElement = createElement("id" + Date.now(), 0, 0, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, "clear")
+                    setElements([...elements, newElement])
+                }}>clear</div>
             </div>
             <canvas
                 width={window.innerWidth}
