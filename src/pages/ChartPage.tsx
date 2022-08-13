@@ -117,7 +117,7 @@ function ChartPage() {
         }
 
     }
-    
+    // https://integrtr.com/building-diagram-tool-with-canvas-react/
     function itrateChart() {
         const tree = generateTree()
         const updadatedList = extractUnits(tree, JSON.parse(JSON.stringify(chart)))
