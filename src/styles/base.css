@@ -18,3 +18,11 @@
       monospace;
   }
   
+  .rootPage {
+    padding: 25px;
+  }
+
+.pageTitle {
+  text-align: center;
+  font-size: 30px;
+}

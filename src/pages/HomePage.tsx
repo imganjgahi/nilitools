@@ -10,6 +10,9 @@ function HomePage() {
         <li>
             <Link to="/draw">Draw</Link>
         </li>
+        <li>
+            <Link to="/todo">ToDo Page</Link>
+        </li>
             </ul>
         </div>
     )

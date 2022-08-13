@@ -1,0 +1,22 @@
+.boards {
+    display: flex;
+    gap: 20px;
+}
+.todoBorad {
+	width: 320px;
+	flex-shrink: 0;
+	border: 1px solid var(--fontColor);
+	padding: 15px;
+	border-radius: var(--radius);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+.todoCard {
+	border: 1px solid var(--fontColor);
+	padding: 10px;
+	border-radius: 5px;
+	cursor: move;
+	background: var(--primary);
+	color: var(--primaryFontColor);
+}
