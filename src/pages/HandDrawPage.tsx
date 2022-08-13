@@ -208,6 +208,7 @@ function HandDrawPage() {
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
+                style={{background: "#ccc"}}
             >canvas</canvas>
         </div>
     )

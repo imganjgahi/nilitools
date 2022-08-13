@@ -1,17 +1,20 @@
 import { Route, Routes } from "react-router-dom";
+import { MainNav } from "../component";
 import {
-  HandDrawPage, 
+  HandDrawPage,
   HomePage,
   ToDoListPage,
 } from "./";
 function AppRoutes() {
   return (
-    
-    <Routes>
-      <Route path='/todo' element={<ToDoListPage />} />
-      <Route path='/draw' element={<HandDrawPage />} />
-      <Route path='/' element={<HomePage />} />
-    </Routes>
+    <div>
+      {/* <MainNav /> */}
+      <Routes>
+        <Route path='/todo' element={<ToDoListPage />} />
+        <Route path='/draw' element={<HandDrawPage />} />
+        <Route path='/' element={<HomePage />} />
+      </Routes>
+    </div>
   )
 }
 
