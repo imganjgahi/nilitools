@@ -1,4 +1,5 @@
 import React from 'react'
+import { BoardStore } from '../../context'
 import Card from './Card'
 
 interface IProps {
@@ -14,7 +15,7 @@ function Board({
     onCardDropHandler,
     cards,
 }: IProps) {
-
+    const store = BoardStore()
     function dropHandler(e: any) {
         e.preventDefault()
         const card_id = e.dataTransfer.getData('card_id')
@@ -22,27 +23,29 @@ function Board({
         // console.log("CARD: ", card)
         // card.style.display = 'block'
         // e.target.appendChild(card)
-        onCardDropHandler(card_id)
+        store.modifyCards(card_id, id)
+        store.toggleIsDragning("")
     }
 
     function dragOverHandler(e: any) {
         e.preventDefault()
     }
-  return (
-    <div 
-    className='todoBorad'
-    id={id}
-    onDrop={dropHandler}
-    onDragOver={dragOverHandler}
-    >
-        {cards.map(c => {
-            return <Card 
-            key={c.id}
-            id={c.id} 
-            title={c.title} />
-        })}
-    </div>
-  )
+    return (
+        <div
+            className='todoBorad'
+            id={id}
+            onDrop={dropHandler}
+            onDragOver={dragOverHandler}
+        >
+            {cards.map(c => {
+                return <Card
+                    key={c.id}
+                    id={c.id}
+                    title={c.title}
+                    data={c} />
+            })}
+        </div>
+    )
 }
 
 export default Board

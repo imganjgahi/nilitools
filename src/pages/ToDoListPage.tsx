@@ -2,22 +2,21 @@ import { Board } from '../component'
 import { BoardStore } from '../context'
 
 function ToDoListPage() {
-    const boardStore = BoardStore()
-
-    const { boards, cards, modifyCards } = boardStore
+    const store = BoardStore()
     return (
         <div className='rootPage toDoListPage'>
             <div className="pageTitle">
                 To Do List Page
             </div>
+            <p> {"DRAG: " + store.isDraging} </p>
             <div className="boards">
                 {
-                    boards.map(b => {
+                    store.boards.map(b => {
                         return <Board
                             id={b.id}
-                            cards={cards.filter(x => x.boardId === b.id)}
+                            cards={store.cards.filter(x => x.boardId === b.id)}
                             onCardDropHandler={cardId => {
-                                modifyCards(cardId, b.id)
+                                store.modifyCards(cardId, b.id)
                             }} />
                     })
                 }

@@ -11,6 +11,8 @@ interface IState {
         title: string
     }[]
     cards: ICards[]
+    isDraging: string
+    toggleIsDragning: (status: string) => void
     modifyCards: (cardId: string, boardId: string) => void
 }
 const BoardStore = createStore<IState>((set, get) => {
@@ -47,6 +49,10 @@ const BoardStore = createStore<IState>((set, get) => {
                 title: 'Card 3'
             },
         ],
+        isDraging: "",
+        toggleIsDragning: (status: string) => {
+            set({isDraging: status})
+        },
         modifyCards: (cardId: string, boardId: string) => {
             set({ cards: get().cards.map(x => {
                 if(x.id === cardId){ 
