@@ -8,8 +8,8 @@ import {
 } from "./";
 function AppRoutes() {
   return (
-    <div>
-      {/* <MainNav /> */}
+    <div className="rootPage">
+      <MainNav />
       <Routes>
         <Route path='/todo' element={<ToDoListPage />} />
         <Route path='/chart' element={<ChartPage />} />

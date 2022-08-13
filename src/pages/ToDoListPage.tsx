@@ -4,7 +4,7 @@ import { BoardStore } from '../context'
 function ToDoListPage() {
     const store = BoardStore()
     return (
-        <div className='rootPage toDoListPage'>
+        <div className='toDoListPage'>
             <div className="pageTitle">
                 To Do List Page
             </div>

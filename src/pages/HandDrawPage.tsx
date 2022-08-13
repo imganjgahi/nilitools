@@ -116,14 +116,18 @@ function HandDrawPage() {
     }
     function handleMouseDown(e: any) {
         const { clientX, clientY } = e
+        const ctxOffset = {
+            x: e.target.getBoundingClientRect().left,
+            y: e.target.getBoundingClientRect().top
+        }
         if(shapeType === "clear") {
             setAction('clear')
         } else if (action === 'ready') {
             setAction('drawing')
-            const newElement = createElement("id" + Date.now(), clientX, clientY, clientX, clientY, shapeType)
+            const newElement = createElement("id" + Date.now(), clientX - ctxOffset.x, clientY - ctxOffset.y, clientX - ctxOffset.x, clientY- ctxOffset.y, shapeType)
             setElements([...elements, newElement])
         } else {
-            const element = getElementAtPosition(clientX, clientY, elements)
+            const element = getElementAtPosition(clientX - ctxOffset.x, clientY - ctxOffset.y, elements)
             if (element) {
                 const offsetX = clientX - element.x1
                 const offsetY = clientY - element.y1
@@ -139,19 +143,23 @@ function HandDrawPage() {
     console.log('State: ', action)
     function handleMouseMove(e: any) {
         const { clientX, clientY } = e
+        const ctxOffset = {
+            x: e.target.getBoundingClientRect().left,
+            y: e.target.getBoundingClientRect().top
+        }
         if(action === 'clear') {
             e.target.style.cursor = 'grabbing'
             const newElement = createElement("id" + Date.now(), clientX - 25, clientY - 25, clientX + 25, clientY + 25, shapeType)
             setElements([...elements, newElement])
         } else if (action === 'selection') {
-            e.target.style.cursor = getElementAtPosition(clientX, clientY, elements) ? "move" : "default"
+            e.target.style.cursor = getElementAtPosition(clientX- ctxOffset.x, clientY- ctxOffset.y, elements) ? "move" : "default"
         } else if (action === 'ready') {
             e.target.style.cursor = 'crosshair'
         } else if (action === 'drawing') {
             const index = elements.length - 1
             // console.log(clientX, clientY)
             const { id, x1, y1, shapeType } = elements[index]
-            updateElement(index, id, x1, y1, clientX, clientY, shapeType)
+            updateElement(index, id, x1, y1, clientX - ctxOffset.x, clientY - ctxOffset.y, shapeType)
         } else if (action === 'moving' && selectedElement) {
             const { id, offsetX, offsetY, } = selectedElement
             const index = elements.findIndex(x => x.id === id)
@@ -208,7 +216,6 @@ function HandDrawPage() {
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
-                style={{background: "#ccc"}}
             >canvas</canvas>
         </div>
     )

@@ -142,7 +142,7 @@ function ChartPage() {
         itrateChart()
     }, [])
   return (
-    <div className='rootPage'>
+    <div>
         <div className="pageTitle">ChartPage</div>
         <div className="chart"></div>
     </div>
