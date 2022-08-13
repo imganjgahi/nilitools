@@ -1,199 +1,152 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
-interface shapeInterFace {
-    id: string
-    x1: number
-    y1: number
-    x2: number
-    y2: number
-    offsetX?: number
-    offsetY?: number
-    shapeType: string
-}
-function HandDraw() {
-    const [action, setAction] = useState('ready')
-    const [elements, setElements] = useState<shapeInterFace[]>([])
-    const [shapeType, setShapeType] = useState("line")
-    const [selectedElement, setSelectedElement] = useState<shapeInterFace | null>(null)
-
-
-    useLayoutEffect(() => {
-        const canvas = document.querySelector('canvas');
-        if (canvas) {
-            const ctx = (canvas as HTMLCanvasElement).getContext('2d');
-            ctx?.clearRect(0, 0, canvas.width, canvas.height)
-            elements.forEach(shape => {
-                const { x1, y1, x2, y2, shapeType } = shape
-                if (shapeType === 'rect') {
-                    ctx?.strokeRect(x1, y1, x2 - x1, y2 - y1);
-                } else if (shapeType === 'line') {
-                    ctx?.beginPath();
-                    ctx?.moveTo(x1, y1);
-                    ctx?.lineTo(x2, y2);
-                    ctx?.stroke();
-                } else if (shapeType === 'circle') {
-                    const radius = getDistance(x1, y1, x2, y2)
-                    ctx?.beginPath();
-                    ctx?.arc(x1, y1, radius, 0, 2 * Math.PI);
-                    ctx?.stroke();
-                } else if (shapeType === 'triangle') {
-                    const radius = getDistance(x1, y1, x2, y2)
-                    ctx?.beginPath();
-                    ctx?.arc(x1, y1, radius, 0, 2 * Math.PI);
-                    ctx?.stroke();
-                }
-            })
-            // if(ctx) {
-            //     ctx.fillStyle = "#FFCC00";
-            // }
-            // ctx?.fill();
-            ctx?.beginPath();
-            ctx?.moveTo(100, 100);
-            ctx?.lineTo(100, 300);
-            ctx?.lineTo(300, 300);
-            ctx?.closePath();
-            ctx?.stroke();
-            // ctx?.strokeRect(10, 10, 150, 100);
-            // ctx?.beginPath();       // Start a new path
-            // ctx?.moveTo(30, 50);    // Move the pen to (30, 50)
-            // ctx?.lineTo(150, 100);  // Draw a line to (150, 100)
-            // ctx?.stroke();
-        }
-
-    })
-
-    function updateElement(index: number, id: string, x1: number, y1: number, x2: number, y2: number, type: string) {
-        const updatedElement = createElement(id, x1, y1, x2, y2, type)
-        const elementsCopy = [...elements]
-        elementsCopy[index] = updatedElement
-        setElements([...elementsCopy])
-    }
-
-    // function updateElement(index: number, x:number, y:number) {
-    //     const updatedElement = createElement(elements[index].id, elements[index].x1, elements[index].y1, x, y, elements[index].shapeType)
-    //     const elementsCopy = [...elements]
-    //     elementsCopy[index] = updatedElement
-    //     setElements([...elementsCopy])
+function ChartPage() {
+    const chart = [
+        {
+            id: "1",
+            title: "unit 1",
+            parentId: ""
+        },
+        {
+            id: "2",
+            title: "unit 2",
+            parentId: "1"
+        },
+        {
+            id: "3",
+            title: "unit 3",
+            parentId: "1"
+        },
+        {
+            id: "4",
+            title: "unit 4",
+            parentId: "2"
+        },
+        {
+            id: "5",
+            title: "unit 5",
+            parentId: "4"
+        },
+        {
+            id: "6",
+            title: "unit 6",
+            parentId: "4"
+        },
+        {
+            id: "7",
+            title: "unit 7",
+            parentId: "2"
+        },
+        {
+            id: "8",
+            title: "unit 8",
+            parentId: "5"
+        },
+        {
+            id: "9",
+            title: "unit 9",
+            parentId: "8"
+        },
+        {
+            id: "10",
+            title: "unit 10",
+            parentId: "9"
+        },
+        {
+            id: "11",
+            title: "unit 11",
+            parentId: "2"
+        },
+        {
+            id: "12",
+            title: "unit 12",
+            parentId: "11"
+        },
+    ]
+    const unitWidth = 130
+    const unitHeight = 30
+    const xGap = 30
+    const yGap = 30
+    // function createUnit(unit) {
+    //     const chart = document.querySelector('.chart')
+    //     const el = document.createElement('div')
+    //     el.id = unit.id
+    //     el.className = "chartUnit"
+    //     el.style.left = ((chart.clientWidth / 2) - (unitWidth / 2) + (unit.x || 0)) + "px"
+    //     el.style.top = (20 + (unit.y || 0)) + "px"
+    //     el.style.width = unitWidth + "px"
+    //     el.style.height = unitHeight + "px"
+    //     console.log("EL :", (chart.clientWidth / 2) + (unit.x || 0))
+    //     chart.appendChild(el)
     // }
-    function getDistance(p1X: number, p1Y: number, p2X: number, p2Y: number) {
-        return Math.sqrt(Math.pow(p1X - p2X, 2) + Math.pow(p1Y - p2Y, 2))
-    }
-
-    function createElement(id: string, x1: number, y1: number, x2: number, y2: number, type: string) {
-        return { id, x1, y1, x2, y2, shapeType: type }
-    }
-
-    function distance(a: { x: number, y: number }, b: { x: number, y: number }) {
-        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
-    }
-    function isInBondry(x: number, y: number, element: shapeInterFace) {
-        const { shapeType, x1, y1, x2, y2 } = element
-        switch (shapeType) {
-            case 'rect':
-                const minX = Math.min(x1, x2)
-                const maxX = Math.max(x1, x2)
-                const minY = Math.min(y1, y2)
-                const maxY = Math.max(y1, y2)
-                return x >= minX && x <= maxX && y >= minY && y <= maxY
-            case 'line':
-                const a = { x: x1, y: y1 }
-                const b = { x: x2, y: y2 }
-                const c = { x, y }
-                const offset = distance(a, b) - (distance(a, c) + distance(b, c))
-                return Math.abs(offset) < 1
-            case 'circle':
-                break
-        }
-    }
-    function getElementAtPosition(x: number, y: number, elements: shapeInterFace[]) {
-        return elements.find(el => isInBondry(x, y, el))
-    }
-    function handleMouseDown(e: any) {
-        const { clientX, clientY } = e
-        if (action === 'ready') {
-            setAction('drawing')
-            const newElement = createElement("id" + Date.now(), clientX, clientY, clientX, clientY, shapeType)
-            setElements([...elements, newElement])
-        } else {
-            const element = getElementAtPosition(clientX, clientY, elements)
-            if (element) {
-                const offsetX = clientX - element.x1
-                const offsetY = clientY - element.y1
-                setSelectedElement({
-                    ...element,
-                    offsetX,
-                    offsetY
-                })
-                setAction('moving')
+    
+    function generateTree(parentId = "", step = 1) {
+        const result = chart.filter(x => x.parentId === parentId).map((unit, index) => ({
+            ...unit,
+            step,
+            index: index + 1,
+            children: []
+        }))
+        result.forEach(item => {
+            if( chart.some(x => x.parentId === item.id) ) {
+                item.children = generateTree(item.id, step+1)
             }
-        }
+        })
+        return result
     }
-    console.log('State: ', action)
-    function handleMouseMove(e: any) {
-        const { clientX, clientY } = e
-        if (action === 'selection') {
-            e.target.style.cursor = getElementAtPosition(clientX, clientY, elements) ? "move" : "default"
-        } else if (action === 'drawing') {
-            e.target.style.cursor = 'crosshair'
-            const index = elements.length - 1
-            // console.log(clientX, clientY)
-            const { id, x1, y1, shapeType } = elements[index]
-            updateElement(index, id, x1, y1, clientX, clientY, shapeType)
-        } else if (action === 'moving' && selectedElement) {
-            const { id, offsetX, offsetY, } = selectedElement
-            const index = elements.findIndex(x => x.id === id)
-            if (index > -1) {
-                const { id, x1, y1, x2, y2, shapeType } = elements[index]
-                const width = x2 - x1
-                const height = y2 - y1
-                const newX = clientX - (offsetX as number)
-                const newY = clientY - (offsetY as number)
-                // updateElement(index, id, newX, newY, newX + width, newY + height, shapeType)
-                updateElement(index, id, newX, newY, newX + width, newY + height, shapeType)
+    
+    function extractUnits(units, tree) {
+        units.forEach(item => {
+            const targetIndex = tree.findIndex(x => x.id === item.id)
+            if(targetIndex > -1) {
+                tree[targetIndex] = {
+                    ...item
+                }
+                if(item.children) {
+                    extractUnits(item.children, tree)
+                }
             }
+        })
+        return tree
+    }
+    
+    function setPosition(tree, levels: any[], mainStep = 1) {
+        for (let i = mainStep; i < levels.at(-1).i; i++) {
+            tree[i].posX = 0
+            
         }
 
     }
-    function handleMouseUp(e: any) {
-        e.target.style.cursor = 'default'
-        if (action === 'moving') {
-            setAction('selection')
-        } else if (action !== 'selection') {
-            setAction('ready')
-            setSelectedElement(null)
+    
+    function itrateChart() {
+        const tree = generateTree()
+        const updadatedList = extractUnits(tree, JSON.parse(JSON.stringify(chart)))
+        const maxStep = updadatedList.reduce(function(a, b) {
+            return a.step > b.step ? a : b;
+        }).step;
+        const maxIndex = updadatedList.reduce(function(a, b) {
+            return a.index > b.index ? a : b;
+        }).index;
+        const levels = []
+        for (let i = 1; i <= maxStep; i++) {
+            levels.push({i, l: updadatedList.filter(x => x.step === i).length})
         }
+        console.log("TREE: ", tree)
+        console.log("LIST: ", updadatedList)
+        console.log("MAX: ", maxStep, maxIndex)
+        console.log("levels: ", levels)
+        setPosition(updadatedList, levels)
     }
 
-    return (
-        <div>
-            <div className="shapePanel">
-                <div className={action === "selection" ? "shape active" : "shape"} onClick={() => {
-                    setAction('selection')
-                    setShapeType("")
-                }}>Selct Items</div>
-                <div className={shapeType === "line" ? "shape active" : "shape"} onClick={() => {
-                    setAction('ready')
-                    setShapeType('line')
-                }}>Line</div>
-                <div className={shapeType === "rect" ? "shape active" : "shape"} onClick={() => {
-                    setAction('ready')
-                    setShapeType('rect')
-                }}>Rectangle</div>
-                <div className={shapeType === "circle" ? "shape active" : "shape"} onClick={() => {
-                    setAction('ready')
-                    setShapeType('circle')
-                }}>Circle</div>
-            </div>
-            <canvas
-                width={400}
-                height={600}
-                style={{ background: "#efefef" }}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-            >canvas</canvas>
-        </div>
-    )
+    useEffect(() => {
+        itrateChart()
+    }, [])
+  return (
+    <div className='rootPage'>
+        <div className="pageTitle">ChartPage</div>
+        <div className="chart"></div>
+    </div>
+  )
 }
 
-export default HandDraw
+export default ChartPage
