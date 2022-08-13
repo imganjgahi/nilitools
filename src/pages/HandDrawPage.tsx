@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 
 interface shapeInterFace {
     id: string
@@ -13,57 +13,48 @@ interface shapeInterFace {
 function HandDrawPage() {
     const [action, setAction] = useState('ready')
     const [elements, setElements] = useState<shapeInterFace[]>([])
-    const [shapeType, setShapeType] = useState("line")
+    const [shapeType, setShapeType] = useState("triangle")
     const [selectedElement, setSelectedElement] = useState<shapeInterFace | null>(null)
 
-
+    const ctx = useRef(null)
     useLayoutEffect(() => {
         const canvas = document.querySelector('canvas');
         if (canvas) {
-            const ctx = (canvas as HTMLCanvasElement).getContext('2d');
-            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary');
-            ctx.lineJoin = "round";
-            ctx.lineCap = "round";
-            ctx.lineWidth = 3;
-            ctx?.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.current = (canvas as HTMLCanvasElement).getContext('2d');
+            ctx.current.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary');
+            ctx.current.lineJoin = "round";
+            ctx.current.lineCap = "round";
+            ctx.current.lineWidth = 3;
+            ctx.current?.clearRect(0, 0, canvas.width, canvas.height)
             elements.forEach(shape => {
                 const { x1, y1, x2, y2, shapeType } = shape
                 if (shapeType === 'clear') {
-                    ctx?.clearRect(x1, y1, x2 - x1, y2 - y1);
+                    ctx.current?.clearRect(x1, y1, x2 - x1, y2 - y1);
                 } else if (shapeType === 'rect') {
-                    ctx?.strokeRect(x1, y1, x2 - x1, y2 - y1);
+                    ctx.current?.strokeRect(x1, y1, x2 - x1, y2 - y1);
                 } else if (shapeType === 'line') {
-                    ctx?.beginPath();
-                    ctx?.moveTo(x1, y1);
-                    ctx?.lineTo(x2, y2);
-                    ctx?.stroke();
+                    ctx.current?.beginPath();
+                    ctx.current?.moveTo(x1, y1);
+                    ctx.current?.lineTo(x2, y2);
+                    ctx.current?.stroke();
                 } else if (shapeType === 'circle') {
                     const radius = getDistance(x1, y1, x2, y2)
-                    ctx?.beginPath();
-                    ctx?.arc(x1, y1, radius, 0, 2 * Math.PI);
-                    ctx?.stroke();
+                    ctx.current?.beginPath();
+                    ctx.current?.arc(x1, y1, radius, 0, 2 * Math.PI);
+                    ctx.current?.stroke();
                 } else if (shapeType === 'triangle') {
-                    const radius = getDistance(x1, y1, x2, y2)
-                    ctx?.beginPath();
-                    ctx?.arc(x1, y1, radius, 0, 2 * Math.PI);
-                    ctx?.stroke();
+                    ctx.current?.beginPath();
+                    ctx.current?.moveTo(x1, y1);
+                    ctx.current?.lineTo(x2, y2);
+                    ctx.current?.lineTo((x2 - (2 * (x2 - x1))), y2);
+                    ctx.current?.closePath();
+                    ctx.current?.stroke();
                 }
             })
             // if(ctx) {
             //     ctx.fillStyle = "#FFCC00";
             // }
             // ctx?.fill();
-            ctx?.beginPath();
-            ctx?.moveTo(100, 100);
-            ctx?.lineTo(100, 300);
-            ctx?.lineTo(300, 300);
-            ctx?.closePath();
-            ctx?.stroke();
-            // ctx?.strokeRect(10, 10, 150, 100);
-            // ctx?.beginPath();       // Start a new path
-            // ctx?.moveTo(30, 50);    // Move the pen to (30, 50)
-            // ctx?.lineTo(150, 100);  // Draw a line to (150, 100)
-            // ctx?.stroke();
         }
 
     })
@@ -96,19 +87,36 @@ function HandDrawPage() {
         const { shapeType, x1, y1, x2, y2 } = element
         switch (shapeType) {
             case 'rect':
-                const minX = Math.min(x1, x2)
-                const maxX = Math.max(x1, x2)
-                const minY = Math.min(y1, y2)
-                const maxY = Math.max(y1, y2)
-                return x >= minX && x <= maxX && y >= minY && y <= maxY
+                {
+                    const minX = Math.min(x1, x2)
+                    const maxX = Math.max(x1, x2)
+                    const minY = Math.min(y1, y2)
+                    const maxY = Math.max(y1, y2)
+                    return x >= minX && x <= maxX && y >= minY && y <= maxY
+                }
             case 'line':
-                const a = { x: x1, y: y1 }
-                const b = { x: x2, y: y2 }
-                const c = { x, y }
-                const offset = distance(a, b) - (distance(a, c) + distance(b, c))
-                return Math.abs(offset) < 1
+                {
+                    const a = { x: x1, y: y1 }
+                    const b = { x: x2, y: y2 }
+                    const c = { x, y }
+                    const offset = distance(a, b) - (distance(a, c) + distance(b, c))
+                    return Math.abs(offset) < 1
+                }
             case 'circle':
-                break
+                {
+                    var dx = x - x1,
+                        dy = y - y1,
+                        dist = Math.sqrt(dx * dx + dy * dy);
+                    return dist < getDistance(x1, y1, x2, y2)
+                }
+            case 'triangle':
+                {
+                    const a = { x: x1, y: y1 }
+                    const b = { x: x2, y: y2 }
+                    const c = { x, y }
+                    const offset = distance(a, b) - (distance(a, c) + distance(b, c))
+                    return Math.abs(offset) < 1
+                }
         }
     }
     function getElementAtPosition(x: number, y: number, elements: shapeInterFace[]) {
@@ -120,11 +128,11 @@ function HandDrawPage() {
             x: e.target.getBoundingClientRect().left,
             y: e.target.getBoundingClientRect().top
         }
-        if(shapeType === "clear") {
+        if (shapeType === "clear") {
             setAction('clear')
         } else if (action === 'ready') {
             setAction('drawing')
-            const newElement = createElement("id" + Date.now(), clientX - ctxOffset.x, clientY - ctxOffset.y, clientX - ctxOffset.x, clientY- ctxOffset.y, shapeType)
+            const newElement = createElement("id" + Date.now(), clientX - ctxOffset.x, clientY - ctxOffset.y, clientX - ctxOffset.x, clientY - ctxOffset.y, shapeType)
             setElements([...elements, newElement])
         } else {
             const element = getElementAtPosition(clientX - ctxOffset.x, clientY - ctxOffset.y, elements)
@@ -147,12 +155,12 @@ function HandDrawPage() {
             x: e.target.getBoundingClientRect().left,
             y: e.target.getBoundingClientRect().top
         }
-        if(action === 'clear') {
+        if (action === 'clear') {
             e.target.style.cursor = 'grabbing'
             const newElement = createElement("id" + Date.now(), clientX - 25, clientY - 25, clientX + 25, clientY + 25, shapeType)
             setElements([...elements, newElement])
         } else if (action === 'selection') {
-            e.target.style.cursor = getElementAtPosition(clientX- ctxOffset.x, clientY- ctxOffset.y, elements) ? "move" : "default"
+            e.target.style.cursor = getElementAtPosition(clientX - ctxOffset.x, clientY - ctxOffset.y, elements) ? "move" : "default"
         } else if (action === 'ready') {
             e.target.style.cursor = 'crosshair'
         } else if (action === 'drawing') {
@@ -205,10 +213,10 @@ function HandDrawPage() {
                     setAction('ready')
                     setShapeType('circle')
                 }}>Circle</div>
-                <div className={shapeType === "clear" ? "shape active" : "shape"} onClick={() => {
+                <div className={shapeType === "triangle" ? "shape active" : "shape"} onClick={() => {
                     setAction('ready')
-                    setShapeType('clear')
-                }}>Clear</div>
+                    setShapeType('triangle')
+                }}>Triangle</div>
             </div>
             <canvas
                 width={window.innerWidth}
