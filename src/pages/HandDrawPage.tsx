@@ -114,8 +114,7 @@ function HandDrawPage() {
                     const a = { x: x1, y: y1 }
                     const b = { x: x2, y: y2 }
                     const c = { x, y }
-                    const offset = distance(a, b) - (distance(a, c) + distance(b, c))
-                    return Math.abs(offset) < 1
+                    return ((y <= y1 && y >= y2) || (y >= y1 && y <= y2)) && ((x <= x1 && x >= x2) || (x >= x1 && x <= x2))
                 }
         }
     }
