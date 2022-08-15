@@ -1,7 +1,16 @@
 import React, { useEffect } from 'react'
 
+interface IUnit {
+    id: string;
+    title: string;
+    parentId: string;
+    step?: number;
+    index?: number;
+    xPos?: number;
+    yPos?: number;
+}
 function ChartPage() {
-    const chart = [
+    const chart: IUnit[] = [
         {
             id: "1",
             title: "unit 1",
@@ -110,12 +119,29 @@ function ChartPage() {
         return tree
     }
     
-    function setPosition(tree, levels: any[], mainStep = 1) {
-        for (let i = mainStep; i < levels.at(-1).i; i++) {
-            tree[i].posX = 0
-            
+    function setPosition(tree: IUnit[], levels: any[]) {
+        let treeStep = 0
+        let calculateLevels = 1
+        for (let i = treeStep; i < levels.length; i++) {
+            const roots = tree.filter(x => x.step === levels[i].i)
+            let xBase = roots.length === 1 ? 0 : roots.length === 2 ? -.5 : -(roots.length / 2)
+            roots.forEach((u, uIndex) => {
+                const targetIndex = tree.findIndex(x => x.id === u.id)
+                tree[targetIndex].xPos =  xBase + (uIndex * 1.5)
+                tree[targetIndex].yPos = i + 1
+            })
+            calculateLevels++
+            if(calculateLevels < levels.length) {
+                treeStep = 0
+            }
         }
 
+        console.log("POSITION: ", tree.sort((a, b) => a.step - b.step).map(x => ({
+            id: (x.id+'-'+x.parentId),
+            // p: x.parentId,
+            x: x.xPos,
+            y: x.yPos
+        })))
     }
     // https://integrtr.com/building-diagram-tool-with-canvas-react/
     function itrateChart() {
@@ -131,9 +157,9 @@ function ChartPage() {
         for (let i = 1; i <= maxStep; i++) {
             levels.push({i, l: updadatedList.filter(x => x.step === i).length})
         }
-        console.log("TREE: ", tree)
+        // console.log("TREE: ", tree)
+        // console.log("MAX: ", maxStep, maxIndex)
         console.log("LIST: ", updadatedList)
-        console.log("MAX: ", maxStep, maxIndex)
         console.log("levels: ", levels)
         setPosition(updadatedList, levels)
     }
